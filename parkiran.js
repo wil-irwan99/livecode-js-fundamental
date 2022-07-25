@@ -109,7 +109,6 @@ prosesParkir = (nopol, owner, kelas) => {
 
 waitProsesParkir = async (nopol, owner, kelas) => {
     try{
-        await waitProsesBangunParkir();
         const result = await prosesParkir(nopol, owner, kelas);
         console.log(result)
     } catch (error) {
@@ -128,7 +127,6 @@ prosesCheck = (kelas) => {
 
 waitProsesCheck = async (kelas) => {
     try{
-        await waitProsesBangunParkir();
         const result = await prosesCheck(kelas);
         console.log(result)
     } catch (error) {
@@ -147,18 +145,18 @@ prosesKeluar = (nopol, kelas) => {
           } else if (result == 'done') {
             resolve(`Mobil dengan nopol ${nopol} sudah keluar`)
           }
-        }, 3000);
+        }, 1500);
       });
 }
 
 waitProsesKeluar= async (nopol, kelas) => {
     try{
-        await waitProsesBangunParkir();
         const result = await prosesKeluar(nopol, kelas);
         console.log(result)
     } catch (error) {
         console.log(error)
     }
+    
 }
 
 
@@ -166,25 +164,18 @@ waitProsesKeluar= async (nopol, kelas) => {
 
 
 //main code
-const parkService = new ParkingLot(3);
-waitProsesBangunParkir();
-waitProsesParkir('B001AA', 'Beni', parkService)
-waitProsesParkir('B001BA', 'Doni', parkService)
-waitProsesParkir('B001BB', 'Jeri', parkService)
+const parkService = new ParkingLot(3); //declare
 
-//NB: Await saya tidak jalan, jadi saya ngecek output dengan timeout
+eksekusiCode = async () => {
+    await prosesBangunParkir();
+    await waitProsesParkir('B001AA', 'Beni', parkService);
+    await waitProsesParkir('B001BA', 'Doni', parkService);
+    await waitProsesParkir('B001BA', 'Doni', parkService);
+    await waitProsesParkir('B001BB', 'Jeri', parkService);
+    await waitProsesCheck(parkService);
+    await waitProsesKeluar('B001AA', parkService);
+    await waitProsesKeluar('B001AA', parkService);
+    await waitProsesCheck(parkService);
+}
 
-setTimeout(()=>{
-    console.log(parkService.carDB)
-    waitProsesCheck(parkService);
-}, 10000)
-
-setTimeout(()=>{
-    waitProsesKeluar('B001AA', parkService)
-    waitProsesKeluar('B001AA', parkService)
-}, 12000)
-
-setTimeout(()=>{
-    console.log(parkService.carDB)
-    waitProsesCheck(parkService);
-}, 16000)
+eksekusiCode();
